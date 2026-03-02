@@ -24,6 +24,15 @@ import { format } from 'date-fns';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import jsPDF from 'jspdf';
+import L from 'leaflet';
+
+// Fix Leaflet marker icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 export default function TripDetail() {
   const { id } = useParams();
@@ -94,6 +103,21 @@ export default function TripDetail() {
     }
   };
 
+  /*map*/
+  const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
+
+useEffect(() => {
+  if (trip?.destination) {
+    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trip.destination)}&format=json&limit=1`)
+      .then(res => res.json())
+      .then(data => {
+        if (data[0]) {
+          setMapCoords([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
+        }
+      });
+  }
+}, [trip?.destination]);
+/************** */
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(22);
@@ -330,19 +354,35 @@ export default function TripDetail() {
               </div>
             </div>
 
-            {/* Map Placeholder/Preview */}
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 h-80">
-              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="font-bold text-slate-900">Destination Map</h2>
-                <MapPin className="text-indigo-600 w-5 h-5" />
-              </div>
-              <div className="h-full bg-slate-100 relative">
-                {/* Leaflet Map would go here, but for simplicity we'll show a message or simple map */}
-                <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-sm p-10 text-center">
-                  Interactive map centered on {trip.destination}
-                </div>
-              </div>
-            </div>
+            {/* Map */}
+<div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 h-80">
+  <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+    <h2 className="font-bold text-slate-900">Destination Map</h2>
+    <MapPin className="text-indigo-600 w-5 h-5" />
+  </div>
+  <div style={{ height: '256px' }}>
+    {mapCoords ? (
+      <MapContainer
+        center={mapCoords}
+        zoom={12}
+        style={{ width: '100%', height: '100%' }}
+        scrollWheelZoom={false}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; OpenStreetMap contributors'
+        />
+        <Marker position={mapCoords}>
+          <Popup>{trip.destination}</Popup>
+        </Marker>
+      </MapContainer>
+    ) : (
+      <div className="h-full flex items-center justify-center bg-slate-50 text-slate-400 text-sm">
+        <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading map...
+      </div>
+    )}
+  </div>
+</div>
           </div>
         </div>
       </div>
