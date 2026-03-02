@@ -9,10 +9,10 @@ import { GoogleGenAI, Type } from "@google/genai";
 import path from "path";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-travel-key";
-
+const PORT = Number(process.env.PORT) || 3000;
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  // const PORT = 3000;
 
   app.use(express.json());
 
