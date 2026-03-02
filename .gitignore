@@ -34,3 +34,5 @@ coverage/
 # Optional cache folders
 .cache/
 .temp/
+
+*.db

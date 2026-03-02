@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import TripPlanner from './pages/TripPlanner';
 import TripDetail from './pages/TripDetail';
 import { useAuthStore } from './store/authStore';
+import MyTrips from './pages/MyTrips';
+
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -32,6 +34,7 @@ export default function App() {
             </PrivateRoute>
           } 
         />
+        <Route path="/trips" element={<PrivateRoute><MyTrips /></PrivateRoute>} />
         <Route 
           path="/trips/:id" 
           element={
