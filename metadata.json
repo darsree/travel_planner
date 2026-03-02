@@ -1,0 +1,5 @@
+{
+  "name": "AI Smart Travel Planner",
+  "description": "A full-stack AI-powered travel planning application with itinerary generation, expense tracking, and weather integration.",
+  "requestFramePermissions": ["geolocation"]
+}
