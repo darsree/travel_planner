@@ -7,7 +7,6 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "tsx server.ts",
     "build": "vite build",
     "start": "NODE_ENV=production tsx server.ts",
     "preview": "vite preview",
@@ -15,6 +14,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "tsx": "^4.21.0",
     "@google/genai": "^1.29.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/bcryptjs": "^2.4.6",
